@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-
+from flask_bcrypt import check_password_hash
 db = SQLAlchemy()
 
 class UserModel(db.Model):
@@ -11,13 +11,23 @@ class UserModel(db.Model):
     password = db.Column(db.String , nullable = False)
 
     #the workouts a user has selected
-    user_workouts = db.relationship('UserWorkout', back_populates='user')
+    user_workouts = db.relationship('UserWorkoutModel', back_populates='user')
 
     workouts = db.relationship('WorkoutModel', secondary='user_workout', back_populates='users')
     #uselist one to one -- one user can have only one profile
-    profile = db.relationship('ProfileModel', backref='user', uselist=False)
+    #profile = db.relationship('ProfileModel', backref='user', uselist=False)
+    
+    def check_password(self, plain_password):
+        return check_password_hash(self.password, plain_password)
+    
+    def to_json(self):
+        return {
+            'id': self.id,
+            'username': self.username,
+            'email': self.email
+        }
 
-class Workout(db.Model):
+class WorkoutModel(db.Model):
     __tablename__ = 'workout'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -30,11 +40,11 @@ class Workout(db.Model):
     created_at = db.Column(db.TIMESTAMP, server_default= db.func.now())
 
     #workouts the user have selected 
-    workout_users = db.relationship('UserWorkout', back_populates='workout')
+    workout_users = db.relationship('UserWorkoutModel', back_populates='workout')
     #relationship between the currentmodel and UserModel
     users = db.relationship('UserModel', secondary='user_workout', back_populates='workouts')
 
-class UserWorkout(db.Model):
+class UserWorkoutModel(db.Model):
     __tablename__ = 'user_workout'
     id = db.Column(db.Integer, primary_key= True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
@@ -53,4 +63,4 @@ class ProfileModel(db.Model):
     dob = db.Column(db.Date, nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), unique=True, nullable=False)
     #user has only one profile
-    user = db.relationship('UserModel', backref='profile', uselist=False)
+    #user = db.relationship('UserModel', backref='profile', uselist=False)
