@@ -99,13 +99,13 @@ class User(Resource):
 
 class Login(Resource):
     user_parser = reqparse.RequestParser()
-    user_parser.add_argument('identifier', required=True, type=str, help="Enter the email or username")
+    user_parser.add_argument('usernameOrEmail', required=True, type=str, help="Enter the email or username")
     user_parser.add_argument('password', required=True, type=str, help="Enter password")
 
     def post(self):
         data = Login.user_parser.parse_args()
 
-        user = UserModel.query.filter(or_(UserModel.email == data['identifier'], UserModel.username == data['identifier'])).first()
+        user = UserModel.query.filter(or_(UserModel.email == data['usernameOrEmail'], UserModel.username == data['usernameOrEmail'])).first()
 
         if user:
             checking_password = user.check_password(data['password'])
