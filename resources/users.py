@@ -6,12 +6,17 @@ import traceback
 
 from flask_jwt_extended import create_access_token, create_refresh_token
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity
+from .profile import profile_fields
+from .userworkouts import userWorkout_fields
 
 user_fields = {
     "id" : fields.Integer,
     "username" : fields.String,
     "email" : fields.String,
-    "password" : fields.String
+    "password" : fields.String,
+    "role":fields.String,
+    "profile":fields.Nested(profile_fields),
+    "workouts":fields.Nested(userWorkout_fields)
 }
 
 
@@ -19,6 +24,7 @@ class User(Resource):
     user_parser = reqparse.RequestParser()
     user_parser.add_argument('username', required=True, type=str, help="Enter the username")
     user_parser.add_argument('email', required=True, type=str,help="Enter the email")
+    user_parser.add_argument('role', required=True, type=str,help="Enter the role")
     user_parser.add_argument('password', required=True, type = str, help="Enter the password")
 
     @marshal_with(user_fields)

@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import check_password_hash
+
 db = SQLAlchemy()
 
 class UserModel(db.Model):
@@ -8,6 +9,7 @@ class UserModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
+    role = db.Column(db.Text, nullable=False)
     password = db.Column(db.String , nullable = False)
 
     #the workouts a user has selected
@@ -15,7 +17,9 @@ class UserModel(db.Model):
 
     workouts = db.relationship('WorkoutModel', secondary='user_workout', back_populates='users')
     #uselist one to one -- one user can have only one profile
-    #profile = db.relationship('ProfileModel', backref='user', uselist=False)
+    profile = db.relationship('ProfileModel', backref='user', uselist=False)
+    #cascade all orphan -- when a user is deleted all his reviews are deleted as well
+    reviews = db.relationship('ReviewModel', back_populates='user', cascade='all, delete-orphan')
     
     def check_password(self, plain_password):
         return check_password_hash(self.password, plain_password)
@@ -35,7 +39,7 @@ class WorkoutModel(db.Model):
     description = db.Column(db.String , nullable=False)
     image = db.Column(db.String , nullable=False)
     trainer = db.Column(db.String, nullable = False)
-    Price = db.Column(db.Integer, nullable=False)
+    price = db.Column(db.Integer, nullable=False)
     time= db.Column(db.String, nullable=False)
     created_at = db.Column(db.TIMESTAMP, server_default= db.func.now())
 
@@ -60,7 +64,25 @@ class ProfileModel(db.Model):
     first_name = db.Column(db.String(120))
     last_name = db.Column(db.String(120))
     phone = db.Column(db.String ,unique = True)
-    dob = db.Column(db.Date, nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), unique=True, nullable=False)
     #user has only one profile
     #user = db.relationship('UserModel', backref='profile', uselist=False)
+
+class ReviewModel(db.Model):
+    __tablename__ = 'review'
+
+    id = db.Column(db.Integer, primary_key=True)
+    comment = db.Column(db.String)
+     # Define the foreign key to link with UserModel
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+    # Establish the back-reference to UserModel
+    user = db.relationship('UserModel', back_populates='reviews')
+
+class Anouncement(db.Model):
+    __tablename__ = 'Announcements'
+
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String , nullable = False)
+    image = db.Column(db.String , nullable = False)
+    description = db.Column(db.String , nullable = False)

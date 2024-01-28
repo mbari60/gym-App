@@ -1,7 +1,7 @@
 from models import UserWorkoutModel, db
 from flask_jwt_extended import jwt_required
 from flask_restful import Resource,fields, marshal_with, reqparse
-from .users import user_fields
+#from .users import user_fields
 from .workouts import workout_fields
 from models import UserModel, WorkoutModel
 
@@ -9,9 +9,9 @@ userWorkout_fields = {
     "id": fields.Integer,
     "user_id":fields.Integer,
     "workout_id": fields.Integer,
-    "user": fields.Nested(user_fields),  # Assuming you have defined user_fields for UserModel
+    #"user": fields.Nested(user_fields),  # Assuming you have defined user_fields for UserModel
     "workout": fields.Nested(workout_fields),
-    
+
 }
 
 class UserWorkout(Resource):
@@ -21,13 +21,13 @@ class UserWorkout(Resource):
     
     #should get data of the user who is currently logged in and wants to see the workout he/she is currentry enrolled in
     @marshal_with(userWorkout_fields)
-    def get(self,id=None):
-        if id:
-            userworkout = UserWorkoutModel.query.filter_by(id=id).first()
+    def get(self,user_id):
+        if user_id:
+            userworkout = UserWorkoutModel.query.filter_by(user_id=user_id).all()
             return userworkout
         else:
-            userworkouts = UserWorkoutModel.query.all()
-            return userworkouts
+            #userworkouts = UserWorkoutModel.query.all()
+            return {"message":"you have not registered for any workout"}
         
     #  I added some things to this post method to deal with the relationships between user 
         # and workouts 

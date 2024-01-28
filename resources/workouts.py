@@ -8,7 +8,7 @@ workout_fields = {
     "description" : fields.String,
     "image":fields.String,
     "trainer" : fields.String,
-    "Price":fields.Integer,
+    "price":fields.Integer,
     "time" : fields.String,
     "created_at" : fields.DateTime    
 }
@@ -21,7 +21,7 @@ class Workout(Resource):
     workout_parser.add_argument('description', required = True,help="Description is required" )
     workout_parser.add_argument('image', required = True,help="Image is required" )
     workout_parser.add_argument('time', required = True,help="Time is required" )
-    workout_parser.add_argument('Price', required = True,help="Price is required" )
+    workout_parser.add_argument('price', required = True,help="Price is required" )
    
    #getting them to be displayed in the frontend --React app
     def get(self,id=None):
