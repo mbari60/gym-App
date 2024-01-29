@@ -15,8 +15,8 @@ user_fields = {
     "email" : fields.String,
     "password" : fields.String,
     "role":fields.String,
-    "profile":fields.Nested(profile_fields),
-    "workouts":fields.Nested(userWorkout_fields)
+    "profile":fields.Nested(profile_fields)
+    #"workouts":fields.Nested(userWorkout_fields)
 }
 
 
