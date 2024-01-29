@@ -9,7 +9,7 @@ from datetime import timedelta
 from models import db , UserModel
 from resources.users import User,Login
 from resources.workouts import Workout
-from resources.userworkouts import UserWorkout
+from resources.userworkouts import UserWorkout #,BookWorkoutResource , BookedWorkoutsResource
 from resources.profile import ProfileResource
 from resources.review import ReviewResource
 from resources.announcements import AnnouncementResource
@@ -38,6 +38,8 @@ api.add_resource(Workout, '/workouts', '/workouts/<int:id>')
 api.add_resource(ProfileResource, '/profile')
 api.add_resource(ReviewResource, '/reviews')
 api.add_resource(AnnouncementResource, '/announcements')
+#api.add_resource(BookWorkoutResource, '/book-workout')
+#api.add_resource(BookedWorkoutsResource, '/booked-workouts')
 
 @jwt.user_lookup_loader
 def user_lookup_callback(_jwt_header, jwt_data):

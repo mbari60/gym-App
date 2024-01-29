@@ -50,7 +50,7 @@ class WorkoutModel(db.Model):
 
 class UserWorkoutModel(db.Model):
     __tablename__ = 'user_workout'
-    id = db.Column(db.Integer, primary_key= True)
+    id = db.Column(db.Integer, primary_key= True , nullable = False , autoincrement = True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
     workout_id = db.Column(db.Integer, db.ForeignKey('workout.id'), primary_key=True)
 
@@ -82,7 +82,7 @@ class ReviewModel(db.Model):
 class Anouncement(db.Model):
     __tablename__ = 'Announcements'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True , nullable= False , autoincrement= True)
     title = db.Column(db.String , nullable = False)
     image = db.Column(db.String , nullable = False)
     description = db.Column(db.String , nullable = False)

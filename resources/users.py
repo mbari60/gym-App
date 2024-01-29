@@ -27,15 +27,13 @@ class User(Resource):
     user_parser.add_argument('role', required=True, type=str,help="Enter the role")
     user_parser.add_argument('password', required=True, type = str, help="Enter the password")
 
+    @jwt_required()
     @marshal_with(user_fields)
-    def get(self,id=None):
-        if id:
-            user = UserModel.query.filter_by(id=id).first()
-            return user
-        else:
-            users = UserModel.query.all()
-            return users
-        
+    def get(self):
+        current_user_id = get_jwt_identity()
+        user = UserModel.query.filter_by(id=current_user_id).first()
+        return user
+    
     def post(self):
         user_data = User.user_parser.parse_args()
 
@@ -77,25 +75,25 @@ class User(Resource):
                  "user": user_json
                  }, 201
 
-        except Exception as e:
-                # Print the exception details for debugging
-                 print(f"Error creating user: {str(e)}")
-                 traceback.print_exc() 
+        except:
                  return {"message": "Unable to create user", "status": "fail"}, 500
 
     #when admin wants to delete a user or a user wants to delete his or her account
-    def delete(self,id):
-        user = UserModel.query.get(id)
+    @jwt_required
+    def delete(self):
+        current_user_id = get_jwt_identity()
+        user = UserModel.query.get(current_user_id)
         if user:
             try:
                 db.session.delete(user)
                 db.session.commit()
 
-                return {"message":"user deleted"}
+                return {"message":"Account deleted successfully"}
             except:
                 return {"message":"user unable to be deleted"}
         else:
             return {"message":"user not found"}
+        
 
 class Login(Resource):
     user_parser = reqparse.RequestParser()
