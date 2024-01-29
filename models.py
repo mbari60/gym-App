@@ -24,6 +24,10 @@ class UserModel(db.Model):
     def check_password(self, plain_password):
         return check_password_hash(self.password, plain_password)
     
+    # @property
+    # def username(self):
+    #     return self.username
+    
     def to_json(self):
         return {
             'id': self.id,
@@ -72,6 +76,7 @@ class ReviewModel(db.Model):
     __tablename__ = 'review'
 
     id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String)
     comment = db.Column(db.String)
      # Define the foreign key to link with UserModel
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
